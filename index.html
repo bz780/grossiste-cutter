@@ -362,6 +362,37 @@ nav .btn-nav:hover { background: var(--orange-700); }
   background: var(--white);
 }
 .gamme-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.gamme-card.is-hidden { display: none; }
+
+.filter-bar{background:var(--orange-50);border:1px solid var(--steel-200);border-radius:var(--radius);padding:18px 20px;margin-top:24px;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}
+.filter-bar .filter-group{display:flex;flex-direction:column;gap:5px;min-width:170px;flex:1}
+.filter-bar label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--slate-900);font-weight:600}
+.filter-bar select{padding:8px 10px;border:1px solid var(--steel-200);border-radius:6px;background:var(--white);font-size:.86rem;color:var(--slate-900);font-family:inherit;cursor:pointer}
+.filter-bar select:focus{outline:none;border-color:var(--orange-600)}
+.filter-bar select option:disabled{color:#bbb}
+.filter-bar .filter-actions{display:flex;align-items:center;gap:14px;margin-left:auto}
+.filter-bar .filter-count{font-size:.82rem;color:var(--slate-500)}
+.filter-bar .filter-count b{color:var(--slate-900)}
+.filter-bar .filter-reset{background:transparent;border:1px solid var(--steel-200);color:var(--slate-900);padding:8px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;font-family:inherit;transition:all .2s}
+.filter-bar .filter-reset:hover{border-color:var(--orange-600);color:var(--orange-600)}
+.filter-empty{display:none;background:var(--orange-50);border:1px dashed var(--orange-600);padding:22px;border-radius:var(--radius);margin-top:18px;text-align:center;font-size:.9rem;color:var(--slate-900)}
+.filter-empty a{color:var(--orange-600);font-weight:600;text-decoration:underline;cursor:pointer}
+.filter-mobile{display:none}
+@media(max-width:760px){
+  .filter-bar{display:none}
+  .filter-mobile{display:block;margin-top:24px}
+  .filter-mobile summary{cursor:pointer;background:var(--white);border:1px solid var(--steel-200);border-radius:var(--radius);padding:14px 18px;font-size:.88rem;color:var(--slate-900);font-weight:600;list-style:none}
+  .filter-mobile summary::-webkit-details-marker{display:none}
+  .filter-mobile summary::after{content:"▼";float:right;font-size:.7rem;color:var(--orange-600)}
+  .filter-mobile[open] summary::after{content:"▲"}
+  .filter-mobile .filter-bar-inner{display:flex;flex-direction:column;gap:14px;padding:18px;background:var(--orange-50);border:1px solid var(--steel-200);border-top:none;border-radius:0 0 var(--radius) var(--radius)}
+  .filter-mobile .filter-group{display:flex;flex-direction:column;gap:5px}
+  .filter-mobile label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--slate-900);font-weight:600}
+  .filter-mobile select{padding:10px;border:1px solid var(--steel-200);border-radius:6px;background:var(--white);font-size:.9rem;color:var(--slate-900);font-family:inherit}
+  .filter-mobile .filter-actions{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--steel-200)}
+  .filter-mobile .filter-count{font-size:.82rem;color:var(--slate-500)}
+  .filter-mobile .filter-reset{background:transparent;border:1px solid var(--steel-200);color:var(--slate-900);padding:8px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;font-family:inherit}
+}
 .gamme-card-top { height: 8px; }
 .gamme-card:nth-child(1) .gamme-card-top { background: var(--orange-600); }
 .gamme-card:nth-child(2) .gamme-card-top { background: #dc2626; }
@@ -898,9 +929,87 @@ nav .btn-nav:hover { background: var(--orange-700); }
       <h2>Nos gammes de cutters en gros</h2>
       <p>Six familles de produits pour couvrir tous les usages — de l'entrepôt logistique a l'atelier de création, du chantier BTP a la salle blanche.</p>
     </div>
+
+    <div class="filter-bar" id="filter-bar-desktop" role="region" aria-label="Filtres des gammes">
+      <div class="filter-group">
+        <label for="f-type">Type de cutter</label>
+        <select id="f-type" data-filter="type">
+          <option value="">Tous les types</option>
+          <option value="secu">Sécurité (rétractable)</option>
+          <option value="multi">Multifonction / heavy-duty</option>
+          <option value="rotatif">Rotatif</option>
+          <option value="precision">Précision (céramique)</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="f-moq">MOQ par modèle</label>
+        <select id="f-moq" data-filter="moq">
+          <option value="">Tous MOQ</option>
+          <option value="10">10 boîtes/pcs</option>
+          <option value="25">25 pièces</option>
+          <option value="50">50 pièces</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="f-prix">Prix unitaire HT</label>
+        <select id="f-prix" data-filter="prix">
+          <option value="">Tous les prix</option>
+          <option value="0-3">Moins de 3 €</option>
+          <option value="3-8">3 à 8 €</option>
+          <option value="8-15">8 à 15 €</option>
+          <option value="15-99">Plus de 15 €</option>
+        </select>
+      </div>
+      <div class="filter-actions">
+        <span class="filter-count" aria-live="polite"><b id="fc-shown">6</b> / <span id="fc-total">6</span> gammes</span>
+        <button type="button" class="filter-reset" id="filter-reset">Réinitialiser</button>
+      </div>
+    </div>
+
+    <details class="filter-mobile" id="filter-bar-mobile">
+      <summary>Filtrer les gammes</summary>
+      <div class="filter-bar-inner">
+        <div class="filter-group">
+          <label for="fm-type">Type de cutter</label>
+          <select id="fm-type" data-filter="type">
+            <option value="">Tous les types</option>
+            <option value="secu">Sécurité (rétractable)</option>
+            <option value="multi">Multifonction / heavy-duty</option>
+            <option value="rotatif">Rotatif</option>
+            <option value="precision">Précision (céramique)</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="fm-moq">MOQ par modèle</label>
+          <select id="fm-moq" data-filter="moq">
+            <option value="">Tous MOQ</option>
+            <option value="10">10 boîtes/pcs</option>
+            <option value="25">25 pièces</option>
+            <option value="50">50 pièces</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="fm-prix">Prix unitaire HT</label>
+          <select id="fm-prix" data-filter="prix">
+            <option value="">Tous les prix</option>
+            <option value="0-3">Moins de 3 €</option>
+            <option value="3-8">3 à 8 €</option>
+            <option value="8-15">8 à 15 €</option>
+            <option value="15-99">Plus de 15 €</option>
+          </select>
+        </div>
+        <div class="filter-actions">
+          <span class="filter-count"><b id="fc-shown-m">6</b> / <span id="fc-total-m">6</span> gammes</span>
+          <button type="button" class="filter-reset" id="filter-reset-m">Réinitialiser</button>
+        </div>
+      </div>
+    </details>
+
+    <div class="filter-empty" id="filter-empty">Aucune gamme ne correspond à votre sélection. <a id="filter-empty-reset">Réinitialiser les filtres</a></div>
+
     <div class="gammes-grid">
 
-      <div class="gamme-card">
+      <div class="gamme-card" data-type="secu" data-moq="50" data-prix-min="1.50" data-prix-max="4">
         <div class="gamme-card-top"></div>
         <div class="gamme-card-body">
           <h3>Cutter rétractable classique</h3>
@@ -914,7 +1023,7 @@ nav .btn-nav:hover { background: var(--orange-700); }
         </div>
       </div>
 
-      <div class="gamme-card">
+      <div class="gamme-card" data-type="secu" data-moq="50" data-prix-min="3" data-prix-max="8">
         <div class="gamme-card-top"></div>
         <div class="gamme-card-body">
           <h3>Cutter de sécurité auto-rétractable</h3>
@@ -928,7 +1037,7 @@ nav .btn-nav:hover { background: var(--orange-700); }
         </div>
       </div>
 
-      <div class="gamme-card">
+      <div class="gamme-card" data-type="multi" data-moq="25" data-prix-min="5" data-prix-max="12">
         <div class="gamme-card-top"></div>
         <div class="gamme-card-body">
           <h3>Cutter professionnel heavy-duty</h3>
@@ -942,7 +1051,7 @@ nav .btn-nav:hover { background: var(--orange-700); }
         </div>
       </div>
 
-      <div class="gamme-card">
+      <div class="gamme-card" data-type="precision" data-moq="25" data-prix-min="8" data-prix-max="18">
         <div class="gamme-card-top"></div>
         <div class="gamme-card-body">
           <h3>Cutter céramique</h3>
@@ -956,7 +1065,7 @@ nav .btn-nav:hover { background: var(--orange-700); }
         </div>
       </div>
 
-      <div class="gamme-card">
+      <div class="gamme-card" data-type="rotatif" data-moq="25" data-prix-min="4" data-prix-max="15">
         <div class="gamme-card-top"></div>
         <div class="gamme-card-body">
           <h3>Cutter rotatif</h3>
@@ -970,7 +1079,7 @@ nav .btn-nav:hover { background: var(--orange-700); }
         </div>
       </div>
 
-      <div class="gamme-card">
+      <div class="gamme-card" data-type="multi" data-moq="10" data-prix-min="1" data-prix-max="5">
         <div class="gamme-card-top"></div>
         <div class="gamme-card-body">
           <h3>Lames & accessoires</h3>
@@ -1566,5 +1675,96 @@ nav .btn-nav:hover { background: var(--orange-700); }
     }
   });
 })();</script>
+<script>
+/* Filtres transverses gammes */
+(function(){
+  var grid = document.querySelector('.gammes-grid');
+  if(!grid) return;
+  var cards = Array.prototype.slice.call(grid.querySelectorAll('.gamme-card'));
+  if(!cards.length) return;
+  var emptyMsg = document.getElementById('filter-empty');
+  var emptyReset = document.getElementById('filter-empty-reset');
+  var resetBtn = document.getElementById('filter-reset');
+  var resetBtnM = document.getElementById('filter-reset-m');
+  var shownEls = [document.getElementById('fc-shown'), document.getElementById('fc-shown-m')];
+  var totalEls = [document.getElementById('fc-total'), document.getElementById('fc-total-m')];
+  var total = cards.length;
+  totalEls.forEach(function(el){ if(el) el.textContent = total; });
+  var allSelects = document.querySelectorAll('.filter-bar select, .filter-mobile select');
+  var state = { type:'', moq:'', prix:'' };
+
+  function priceOverlap(card, range){
+    if(!range) return true;
+    var parts = range.split('-');
+    var rMin = parseFloat(parts[0]);
+    var rMax = parseFloat(parts[1]);
+    var cMin = parseFloat(card.getAttribute('data-prix-min'));
+    var cMax = parseFloat(card.getAttribute('data-prix-max'));
+    if(isNaN(cMin) || isNaN(cMax)) return false;
+    return cMin <= rMax && cMax >= rMin;
+  }
+
+  function cardMatches(card, st){
+    if(st.type && card.getAttribute('data-type') !== st.type) return false;
+    if(st.moq && card.getAttribute('data-moq') !== st.moq) return false;
+    if(st.prix && !priceOverlap(card, st.prix)) return false;
+    return true;
+  }
+
+  function apply(){
+    var shown = 0;
+    cards.forEach(function(c){
+      if(cardMatches(c, state)){ c.classList.remove('is-hidden'); shown++; }
+      else { c.classList.add('is-hidden'); }
+    });
+    shownEls.forEach(function(el){ if(el) el.textContent = shown; });
+    emptyMsg.style.display = shown === 0 ? 'block' : 'none';
+    updateOptionsAvailability();
+  }
+
+  function updateOptionsAvailability(){
+    ['type','moq','prix'].forEach(function(fname){
+      var simState = { type:state.type, moq:state.moq, prix:state.prix };
+      var selects = document.querySelectorAll('select[data-filter="'+fname+'"]');
+      selects.forEach(function(sel){
+        Array.prototype.slice.call(sel.options).forEach(function(opt){
+          if(opt.value === ''){
+            opt.disabled = false;
+            opt.textContent = opt.textContent.replace(/\s*\(\d+\)$/,'');
+            return;
+          }
+          simState[fname] = opt.value;
+          var count = cards.filter(function(c){ return cardMatches(c, simState); }).length;
+          var base = opt.textContent.replace(/\s*\(\d+\)$/,'');
+          opt.textContent = base + ' (' + count + ')';
+          opt.disabled = count === 0;
+        });
+        simState[fname] = state[fname];
+      });
+    });
+  }
+
+  function reset(){
+    state = { type:'', moq:'', prix:'' };
+    allSelects.forEach(function(s){ s.value = ''; });
+    apply();
+  }
+
+  allSelects.forEach(function(sel){
+    sel.addEventListener('change', function(){
+      var f = sel.getAttribute('data-filter');
+      state[f] = sel.value;
+      document.querySelectorAll('select[data-filter="'+f+'"]').forEach(function(s){ s.value = sel.value; });
+      apply();
+    });
+  });
+
+  if(resetBtn) resetBtn.addEventListener('click', reset);
+  if(resetBtnM) resetBtnM.addEventListener('click', reset);
+  if(emptyReset) emptyReset.addEventListener('click', function(e){ e.preventDefault(); reset(); });
+
+  apply();
+})();
+</script>
 </body>
 </html>
